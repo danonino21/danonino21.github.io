@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daniel Vásquez Parra — Ingeniería de Agentes de IA</title>
+<meta name="description" content="Daniel Vásquez Parra — Ingeniero Civil Eléctrico especializado en agentes de IA, automatización y orquestación de sistemas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a1420;
+    --bg-alt:#0d1a29;
+    --surface:#122236;
+    --line:#20364e;
+    --text:#e8eef4;
+    --text-muted:#8ba0b7;
+    --text-faint:#5c7086;
+    --trace:#5be8c6;
+    --trace-dim:#2c5a4f;
+    --amber:#eda45f;
+    --radius:3px;
+    --maxw:860px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-attachment: fixed;
+    background-position: center;
+    color:var(--text);
+    font-family:'Inter', system-ui, sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:radial-gradient(ellipse at 50% 0%, rgba(10,20,32,0.2) 0%, var(--bg) 72%);
+    pointer-events:none;
+    z-index:0;
+  }
+  .wrap{
+    position:relative;
+    z-index:1;
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 24px;
+  }
+  h1,h2,h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .mono{
+    font-family:'JetBrains Mono', monospace;
+  }
+  a{color:var(--trace);}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:10;
+    background:rgba(10,18,29,0.86);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-top:16px; padding-bottom:16px;
+  }
+  .nav-id{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--text-muted);
+    display:flex; align-items:center; gap:8px;
+  }
+  .nav-id .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--trace);
+    box-shadow:0 0 8px var(--trace);
+    animation:pulse-dot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{
+    0%,100%{opacity:1;}
+    50%{opacity:0.35;}
+  }
+  .nav-links{
+    display:flex; gap:22px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+  }
+  .nav-links a{
+    color:var(--text-muted);
+    text-decoration:none;
+    transition:color .15s;
+  }
+  .nav-links a:hover{color:var(--trace);}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding:88px 0 56px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--trace);
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    margin-bottom:18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px; height:1px;
+    background:var(--trace);
+  }
+  h1.headline{
+    font-size:clamp(32px, 5.2vw, 50px);
+    line-height:1.12;
+    max-width:15ch;
+  }
+  h1.headline .accent{color:var(--trace);}
+  .hero-sub{
+    margin-top:22px;
+    max-width:56ch;
+    color:var(--text-muted);
+    font-size:16.5px;
+  }
+  .hero-meta{
+    margin-top:28px;
+    display:flex; flex-wrap:wrap; gap:10px 18px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--text-faint);
+  }
+  .hero-meta span{display:flex; align-items:center; gap:7px;}
+  .hero-meta svg{width:13px; height:13px; opacity:0.7;}
+
+  /* ---------- SCHEMATIC (signature element) ---------- */
+  .schematic{
+    margin-top:52px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, var(--surface), var(--bg-alt));
+    padding:28px 20px 22px;
+    overflow:hidden;
+  }
+  .schematic-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .schematic svg{width:100%; height:auto; display:block;}
+  .node-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    fill:var(--text-muted);
+  }
+  .node-label.active{fill:var(--trace);}
+  .trace-path{
+    fill:none;
+    stroke:var(--trace-dim);
+    stroke-width:1.5;
+  }
+  .pulse{
+    fill:none;
+    stroke:var(--trace);
+    stroke-width:2;
+    stroke-dasharray:14 900;
+    stroke-dashoffset:0;
+    filter:drop-shadow(0 0 4px var(--trace));
+    animation:flow 5.5s linear infinite;
+  }
+  @keyframes flow{
+    from{stroke-dashoffset:0;}
+    to{stroke-dashoffset:-914;}
+  }
+  .node-dot{
+    fill:var(--bg-alt);
+    stroke:var(--trace-dim);
+    stroke-width:1.5;
+  }
+  .node-dot.lit{
+    animation:lit 5.5s linear infinite;
+  }
+  @keyframes lit{
+    0%,14%{fill:var(--bg-alt); stroke:var(--trace-dim);}
+    17%,26%{fill:var(--trace); stroke:var(--trace);}
+    30%,100%{fill:var(--bg-alt); stroke:var(--trace-dim);}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .pulse, .node-dot.lit, .nav-id .dot{animation:none;}
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:64px 0;}
+  section + section{border-top:1px solid var(--line);}
+  .section-head{
+    display:flex; align-items:baseline; gap:14px;
+    margin-bottom:30px;
+  }
+  .section-head .node{
+    width:9px; height:9px;
+    border:1.5px solid var(--trace);
+    border-radius:50%;
+    flex-shrink:0;
+    box-shadow:0 0 6px rgba(91,232,198,0.5);
+  }
+  .section-head h2{
+    font-size:22px;
+  }
+  .section-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--text-faint);
+    margin-left:auto;
+  }
+
+  .lead-text{
+    color:var(--text-muted);
+    font-size:16px;
+    max-width:64ch;
+  }
+
+  /* ---------- PROJECT ---------- */
+  .project-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--surface);
+    padding:28px 26px;
+  }
+  .project-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    flex-wrap:wrap; gap:12px;
+    margin-bottom:6px;
+  }
+  .project-head h3{font-size:19px;}
+  .project-link{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--trace);
+    text-decoration:none;
+    border:1px solid var(--trace-dim);
+    padding:5px 11px;
+    border-radius:20px;
+    white-space:nowrap;
+    transition:border-color .15s, background .15s;
+  }
+  .project-link:hover{border-color:var(--trace); background:rgba(91,232,198,0.06);}
+  .project-desc{color:var(--text-muted); margin:14px 0 16px; font-size:15px;}
+  .tags{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px;}
+  .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--amber);
+    border:1px solid rgba(237,164,95,0.35);
+    background:rgba(237,164,95,0.06);
+    padding:3px 9px;
+    border-radius:20px;
+  }
+  .bullets{margin:0; padding-left:0; list-style:none;}
+  .bullets li{
+    position:relative;
+    padding-left:20px;
+    margin-bottom:10px;
+    color:var(--text-muted);
+    font-size:14.5px;
+  }
+  .bullets li::before{
+    content:"";
+    position:absolute; left:0; top:8px;
+    width:8px; height:1.5px;
+    background:var(--trace-dim);
+  }
+
+  /* ---------- EXPERIENCE TIMELINE ---------- */
+  .timeline{position:relative; padding-left:26px;}
+  .timeline::before{
+    content:"";
+    position:absolute; left:4px; top:6px; bottom:6px;
+    width:1.5px;
+    background:var(--line);
+  }
+  .tl-item{position:relative; margin-bottom:36px;}
+  .tl-item:last-child{margin-bottom:0;}
+  .tl-item::before{
+    content:"";
+    position:absolute; left:-26px; top:5px;
+    width:9px; height:9px;
+    border-radius:50%;
+    background:var(--bg);
+    border:1.5px solid var(--trace-dim);
+  }
+  .tl-role{font-size:16.5px; font-weight:600; font-family:'Space Grotesk',sans-serif;}
+  .tl-meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--text-faint);
+    margin:4px 0 12px;
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skill-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+    gap:22px 32px;
+  }
+  .skill-group-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--trace);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:10px;
+  }
+  .skill-list{color:var(--text-muted); font-size:14px; line-height:1.9;}
+
+  /* ---------- EDUCATION ---------- */
+  .edu-row{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
+  .edu-degree{font-weight:600; font-family:'Space Grotesk',sans-serif; font-size:16px;}
+  .edu-meta{font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-faint);}
+  .edu-courses{color:var(--text-muted); font-size:14px; margin-top:8px;}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  footer{
+    padding:70px 0 60px;
+    text-align:center;
+  }
+  footer h2{
+    font-size:26px;
+    max-width:20ch;
+    margin:0 auto 16px;
+  }
+  footer p{color:var(--text-muted); margin-bottom:32px;}
+  .contact-links{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:14px;
+  }
+  .contact-btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--text);
+    text-decoration:none;
+    border:1px solid var(--line);
+    padding:11px 20px;
+    border-radius:var(--radius);
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .contact-btn:hover{border-color:var(--trace); color:var(--trace); background:rgba(91,232,198,0.05);}
+  .contact-btn.primary{
+    border-color:var(--trace);
+    color:var(--bg);
+    background:var(--trace);
+  }
+  .contact-btn.primary:hover{background:#7ff0d3; color:var(--bg);}
+  .foot-note{
+    margin-top:44px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--text-faint);
+  }
+
+  @media (max-width:600px){
+    header.hero{padding:64px 0 40px;}
+    section{padding:48px 0;}
+    .nav-links{gap:14px;}
+    .project-head{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-id"><span class="dot"></span>daniel@agents:~$</div>
+    <div class="nav-links">
+      <a href="#proyecto">proyecto</a>
+      <a href="#experiencia">experiencia</a>
+      <a href="#stack">stack</a>
+      <a href="#contacto">contacto</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Ingeniero Civil Eléctrico → Agentes de IA</div>
+    <h1 class="headline">Diseño sistemas que <span class="accent">deciden, orquestan</span> y llegan a producción.</h1>
+    <p class="hero-sub">
+      Cuatro años construyendo pipelines de automatización y validación técnica en entornos de alta exigencia.
+      Hoy diseño y despliego agentes de IA — la misma disciplina de siempre, aplicada a un problema distinto:
+      qué modelo usar, cómo orquestar herramientas y cómo manejar errores cuando el sistema corre solo.
+    </p>
+    <div class="hero-meta">
+      <span class="mono">Santiago, Chile</span>
+      <span class="mono">·</span>
+      <span class="mono">Python · LangChain · LangGraph</span>
+      <span class="mono">·</span>
+      <span class="mono">GCP Vertex AI</span>
+    </div>
+
+    <div class="schematic">
+      <div class="schematic-label">// pipeline en producción — football-oracle</div>
+      <svg viewBox="0 0 720 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama de flujo del agente: ingesta, análisis, decisión y salida">
+        <path class="trace-path" d="M60,65 L200,65 M200,65 L200,30 L340,30 M200,65 L200,100 L340,100 M340,30 L480,30 M340,100 L480,100 M480,30 L620,65 M480,100 L620,65 M620,65 L660,65"/>
+        <path class="pulse" d="M60,65 L200,65 L200,30 L340,30 L480,30 L620,65 L660,65"/>
+        <circle class="node-dot lit" cx="60" cy="65" r="6"/>
+        <circle class="node-dot" cx="200" cy="65" r="5"/>
+        <circle class="node-dot lit" cx="340" cy="30" r="6" style="animation-delay:-1.1s"/>
+        <circle class="node-dot" cx="340" cy="100" r="5"/>
+        <circle class="node-dot lit" cx="480" cy="30" r="6" style="animation-delay:-2.2s"/>
+        <circle class="node-dot" cx="480" cy="100" r="5"/>
+        <circle class="node-dot lit" cx="620" cy="65" r="6" style="animation-delay:-3.3s"/>
+        <text class="node-label" x="60" y="90" text-anchor="middle">scrape</text>
+        <text class="node-label" x="200" y="112" text-anchor="middle">datos</text>
+        <text class="node-label" x="340" y="18" text-anchor="middle">dixon-coles</text>
+        <text class="node-label" x="340" y="120" text-anchor="middle">tools</text>
+        <text class="node-label" x="480" y="18" text-anchor="middle">monte carlo</text>
+        <text class="node-label" x="480" y="120" text-anchor="middle">agente</text>
+        <text class="node-label" x="655" y="90" text-anchor="middle">API</text>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<section id="proyecto">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="node"></span>
+      <h2>Proyecto destacado</h2>
+      <span class="section-num mono">01</span>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3>Football Oracle — agente de IA para predicción futbolística</h3>
+        <a class="project-link" href="https://github.com/danonino21/football-oracle" target="_blank" rel="noopener">↗ github.com/danonino21/football-oracle</a>
+      </div>
+      <p class="project-desc">
+        Agente conversacional con herramientas propias para ingesta, análisis y proyección de resultados de la Primera División chilena.
+        El agente decide de forma autónoma qué herramienta invocar — scraper, motor estadístico o API externa — según el objetivo del usuario,
+        con razonamiento paso a paso y salida en lenguaje natural.
+      </p>
+      <div class="tags">
+        <span class="tag">Python</span>
+        <span class="tag">LangChain</span>
+        <span class="tag">LangGraph</span>
+        <span class="tag">Flask · API REST</span>
+        <span class="tag">Playwright</span>
+        <span class="tag">Dixon-Coles</span>
+        <span class="tag">Monte Carlo</span>
+      </div>
+      <ul class="bullets">
+        <li>Orquestación multi-step con LangGraph: el agente selecciona herramientas sin intervención manual, incluyendo decisiones de manejo de errores en la integración entre sistemas.</li>
+        <li>Scraper con Playwright contra Sofascore para extraer xG y estadísticas avanzadas, sorteando bloqueos de Cloudflare.</li>
+        <li>Modelo estadístico Dixon-Coles + simulación Monte Carlo para proyectar probabilidades de campeonato.</li>
+        <li>Sistema en producción, consultable vía API REST Flask con dashboard interactivo (predicciones, tabla de posiciones, chat con el agente).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="experiencia">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="node"></span>
+      <h2>Experiencia</h2>
+      <span class="section-num mono">02</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-role">Sr. Product Validation Engineer — Synopsys Chile</div>
+        <div class="tl-meta">Abr 2022 – Nov 2025</div>
+        <ul class="bullets">
+          <li>Diseñé pipelines en Python y Bash para procesar y analizar logs de más de 1 millón de eventos, detectando anomalías de forma automatizada y reduciendo tiempos de revisión de ~3 horas a minutos.</li>
+          <li>Triage y escalación técnica de incidencias de software, con seguimiento en JIRA y coordinación continua en inglés con equipos en EE.UU. y Asia.</li>
+          <li>Generé reportes técnicos y análisis exploratorio (EDA/SQL) sobre grandes volúmenes de datos para clientes internacionales.</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-role">Automatización de QA — Selenium / Pytest (proyecto propio)</div>
+        <div class="tl-meta">Python · Selenium · Pytest · Page Object Model</div>
+        <ul class="bullets">
+          <li>Suite de pruebas end-to-end con patrón POM, reportes automatizados y ejecución en CI.</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-role">Supervisor Eléctrico — Ing. y Construcción Santa Sofía Ltda.</div>
+        <div class="tl-meta">Abr 2021 – Abr 2022</div>
+        <ul class="bullets">
+          <li>Planificación y ejecución de proyectos eléctricos en terreno, documentación técnica (as-built) y coordinación de equipos multidisciplinarios.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="node"></span>
+      <h2>Stack técnico</h2>
+      <span class="section-num mono">03</span>
+    </div>
+    <div class="skill-grid">
+      <div>
+        <div class="skill-group-label">IA generativa &amp; agentes</div>
+        <div class="skill-list">LangChain, LangGraph, OpenAI API / Anthropic API, prompt design, function calling, orquestación multi-agente</div>
+      </div>
+      <div>
+        <div class="skill-group-label">Cloud &amp; arquitectura</div>
+        <div class="skill-list">GCP (Vertex AI / Agent Builder, Cloud Storage), nociones de AWS, Git / GitHub, CI básico, Linux</div>
+      </div>
+      <div>
+        <div class="skill-group-label">Automatización &amp; pipelines</div>
+        <div class="skill-list">Python avanzado (Pandas, NumPy), Bash, ETL, Selenium / Pytest</div>
+      </div>
+      <div>
+        <div class="skill-group-label">Datos &amp; BI</div>
+        <div class="skill-list">SQL (joins, window functions, CTEs), análisis de logs, Power BI, EDA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="educacion">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="node"></span>
+      <h2>Educación</h2>
+      <span class="section-num mono">04</span>
+    </div>
+    <div class="edu-row">
+      <span class="edu-degree">Ingeniería Civil Eléctrica</span>
+      <span class="edu-meta">Universidad de Chile · 2015–2023 · Distinción Máxima</span>
+    </div>
+    <p class="edu-courses">Cursos relevantes: Teoría de Machine Learning, Deep Learning, Inteligencia Computacional, Procesamiento Avanzado de Datos.</p>
+  </div>
+</section>
+
+<footer id="contacto">
+  <div class="wrap">
+    <h2>¿Hablamos de tu próximo agente de IA en producción?</h2>
+    <p>Disponible para conversar sobre roles de IA, datos y automatización.</p>
+    <div class="contact-links">
+      <a class="contact-btn primary" href="mailto:divasquezp@gmail.com">Escribir por correo</a>
+      <a class="contact-btn" href="https://github.com/danonino21" target="_blank" rel="noopener">GitHub</a>
+      <a class="contact-btn" href="#" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="contact-btn mono" href="tel:+56940554516">+56 9 4055 4516</a>
+    </div>
+    <div class="foot-note">Santiago, Chile — español nativo · inglés intermedio-avanzado</div>
+  </div>
+</footer>
+
+</body>
+</html>
